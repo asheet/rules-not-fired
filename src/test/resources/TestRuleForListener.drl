@@ -1,0 +1,36 @@
+package com.andrew.listeners;
+
+import com.andrew.model.Person;
+
+rule "Listener Test"
+    when
+        $per: Person( isRightHanded() == false )
+    then
+        modify($per) {
+            setFullName("Andrew One")
+        }
+end
+
+rule "delete"
+ruleflow-group "all"
+    when
+        $per: Person(FullName == "Andrew One")
+    then
+        delete($per)
+end
+
+rule "Listener Test 2"
+    when
+        $per: Person( isRightHanded() == true )
+    then
+        modify($per) {
+            setFullName("Andrew Two")
+        }
+end
+
+rule "Process Rule"
+ruleflow-group "all"
+    when
+    then
+        System.out.println("Hello From Process Rule");
+end

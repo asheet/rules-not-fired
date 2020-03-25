@@ -1,0 +1,13 @@
+package com.andrew.different_package;
+
+import com.andrew.model.Person;
+
+rule "Package Test"
+    when
+        $per: Person( isRightHanded() == true )
+    then
+        modify($per) {
+            setFullName("Andrew Three")
+        }
+end
+
