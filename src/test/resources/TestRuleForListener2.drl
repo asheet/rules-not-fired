@@ -1,5 +1,5 @@
 package com.andrew.different_package;
-
+// notice the different package
 import com.andrew.model.Person;
 
 rule "Package Test"

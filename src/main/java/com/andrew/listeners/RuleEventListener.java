@@ -16,19 +16,11 @@ import org.kie.api.event.rule.MatchCreatedEvent;
 import org.kie.api.event.rule.RuleFlowGroupActivatedEvent;
 import org.kie.api.event.rule.RuleFlowGroupDeactivatedEvent;
 
-public class RuleEventListener implements AgendaEventListener {
-	private List<String> rulesFired = new ArrayList<String>();
-	private String ruleFlowGroup = "";
-	private HashMap<String, ArrayList<String>> rulesInPackage = new HashMap<String, ArrayList<String>>();
-
-	public HashMap<String, ArrayList<String>> getRulesNotFired() {
-		return rulesInPackage;
-	}
-
-//1. On start up get all the packages
-//2. create map of all the packages
-//3. get all rules associated to the package
-//Per RFG - get rule that fired and remove from the rules in the specific package.
+//1. Get all the packages
+//2. Create map of all the packages
+//3. Get all rules associated to the package
+//4. When rule fired, remove it from the Map-ArrayList
+// Map will look like
 // -Package1
 //     -rule
 //     -rule
@@ -41,6 +33,13 @@ public class RuleEventListener implements AgendaEventListener {
 //     -rule
 //     -rule
 
+public class RuleEventListener implements AgendaEventListener {
+	private List<String> rulesFired = new ArrayList<String>();
+	private HashMap<String, ArrayList<String>> rulesInPackage = new HashMap<String, ArrayList<String>>();
+
+	public HashMap<String, ArrayList<String>> getRulesNotFired() {
+		return rulesInPackage;
+	}
 
     public List<String> getRulesFired() {
         return this.rulesFired;
@@ -51,19 +50,17 @@ public class RuleEventListener implements AgendaEventListener {
     }
 
     public void afterMatchFired(AfterMatchFiredEvent event) {
-		// remove the rule from the list of rules. so we can get the list of rules that were not fired.
-		rulesInPackage.get(event.getMatch().getRule().getPackageName()).remove(event.getMatch().getRule().getName());
-		System.out.println("Rules in pacakge after " + event.getMatch().getRule().getName() +
-		" rule fired: " + rulesInPackage.toString());
+		String rule = event.getMatch().getRule().getName(); // rule that just fired
 
-		rulesFired.add(event.getMatch().getRule().getName());
+		// Get the package of the rule that just fired
+		// remove the rule from the list of rules so we can create the list of rules that were not fired.
+		rulesInPackage.get(event.getMatch().getRule().getPackageName()).remove(rule);
+		System.out.println("Rules in package after rule `" + rule +
+		"` fired: " + rulesInPackage.toString());
+
+		rulesFired.add(rule);
     }
 
-	
-	public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
-		//ruleFlowGroup = event.getRuleFlowGroup().getName();
-	}
-	
 	public void matchCreated(MatchCreatedEvent event) {
 		// 1. Create HashMap for Packages and get all rules
 		if(rulesInPackage.isEmpty()) {
@@ -79,8 +76,10 @@ public class RuleEventListener implements AgendaEventListener {
 		System.out.println("All the rules in each package: " + rulesInPackage.toString()); // remove the rule when after match fired.
 	}
 
+	public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
+	}
+	
 	public void beforeRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
-
 	}
 	
 	public void matchCancelled(MatchCancelledEvent event) {
