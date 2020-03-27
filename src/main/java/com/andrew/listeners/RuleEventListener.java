@@ -69,13 +69,13 @@ public class RuleEventListener implements AgendaEventListener {
 				rulesInPackage.put(pack.getName(), new ArrayList<String>());
 
 				for (org.kie.api.definition.rule.Rule r : pack.getRules()) {
-					rulesInPackage.get(pack.getName()).add(r.getName()); // get the key in the map. add the rules to the
-																			// arraylist
+					// get the key in the map. add the rules to the arraylist
+					rulesInPackage.get(pack.getName()).add(r.getName()); 												
 				}
 			}
 		}
-		System.out.println("All the rules in each package: " + rulesInPackage.toString()); // remove the rule when after
-																							// match fired.
+		System.out.println("All the rules in each package: " + rulesInPackage.toString());
+		// need to remove rule after matchfired
 	}
 
 	public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
