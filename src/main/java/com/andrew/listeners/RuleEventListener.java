@@ -41,50 +41,52 @@ public class RuleEventListener implements AgendaEventListener {
 		return rulesInPackage;
 	}
 
-    public List<String> getRulesFired() {
-        return this.rulesFired;
-    }
-    
-    public void setRulesFired(List<String> listRules) {
-        this.rulesFired = listRules;
-    }
+	public List<String> getRulesFired() {
+		return this.rulesFired;
+	}
 
-    public void afterMatchFired(AfterMatchFiredEvent event) {
+	public void setRulesFired(List<String> listRules) {
+		this.rulesFired = listRules;
+	}
+
+	public void afterMatchFired(AfterMatchFiredEvent event) {
 		String rule = event.getMatch().getRule().getName(); // rule that just fired
 
 		// Get the package of the rule that just fired
-		// remove the rule from the list of rules so we can create the list of rules that were not fired.
+		// remove the rule from the list of rules so we can create the list of rules
+		// that were not fired.
 		rulesInPackage.get(event.getMatch().getRule().getPackageName()).remove(rule);
-		System.out.println("Rules in package after rule `" + rule +
-		"` fired: " + rulesInPackage.toString());
+		System.out.println("Rules in package after rule `" + rule + "` fired: " + rulesInPackage.toString());
 
 		rulesFired.add(rule);
-    }
+	}
 
 	public void matchCreated(MatchCreatedEvent event) {
 		// 1. Create HashMap for Packages and get all rules
-		if(rulesInPackage.isEmpty()) {
+		if (rulesInPackage.isEmpty()) {
 			Collection<KiePackage> packages = event.getKieRuntime().getKieBase().getKiePackages();
-			for(KiePackage pack: packages) {
+			for (KiePackage pack : packages) {
 				rulesInPackage.put(pack.getName(), new ArrayList<String>());
-				
-				for(org.kie.api.definition.rule.Rule r : pack.getRules()) {
-					rulesInPackage.get(pack.getName()).add(r.getName()); // get the key in the map. add the rules to the arraylist
+
+				for (org.kie.api.definition.rule.Rule r : pack.getRules()) {
+					rulesInPackage.get(pack.getName()).add(r.getName()); // get the key in the map. add the rules to the
+																			// arraylist
 				}
 			}
 		}
-		System.out.println("All the rules in each package: " + rulesInPackage.toString()); // remove the rule when after match fired.
+		System.out.println("All the rules in each package: " + rulesInPackage.toString()); // remove the rule when after
+																							// match fired.
 	}
 
 	public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
 	}
-	
+
 	public void beforeRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
 	}
-	
+
 	public void matchCancelled(MatchCancelledEvent event) {
 	}
-	
+
 	public void beforeMatchFired(BeforeMatchFiredEvent event) {
 	}
 
